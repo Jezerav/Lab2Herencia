@@ -8,7 +8,7 @@ package lab2herencia;
  *
  * @author jerem
  */
-public class Lab2Herencia {
+public class GUI {
 
     /**
      * @param args the command line arguments
