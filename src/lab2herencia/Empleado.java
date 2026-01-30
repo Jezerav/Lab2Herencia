@@ -26,10 +26,10 @@ public class Empleado {
         this.horasTotal=0;
     }
     
-    public String getCodigoEmp() {
+    public String getCodigo() {
         return codigo;
     }
-    public String getNombreEmp() {
+    public String getNombre() {
         return nombre;
     }
 
@@ -42,12 +42,14 @@ public class Empleado {
     }
     
     public double calcularPago(){
-        double pagoProp = (salarioBase * (horasTotal/160.00));
-        double deduccion = pagoProp * 0.035;
-        
-        return pagoProp - deduccion;
+        return salarioBase * (horasTotal/160.00);
     }
-    public double getHorasTrabajadas() {
+    
+    public double calcularPagoConDeduccion(){ //Jeremy: lo separo para que no se mezcle con las deducciones a los Temporales y Ventas
+        double pago = calcularPago();
+        return pago - (pago * 0.035);
+    }
+    public double getHorasTotal() {
         return horasTotal;
     }
     
