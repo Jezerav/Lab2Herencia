@@ -91,9 +91,7 @@ public class GUI {
         frame.add(panelCentral, BorderLayout.CENTER);
         frame.add(panelInferior, BorderLayout.SOUTH);
 
-        btnAdd.addActionListener(e -> {
-            consola.append("> Iniciando registro de empleado...\n");
-        });
+        btnAdd.addActionListener(e -> mostrarInfo());
 
         btnSearch.addActionListener(e -> {
             consola.append("> Buscando empleado en la base de datos...\n");
