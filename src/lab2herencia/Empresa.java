@@ -4,6 +4,7 @@ package lab2herencia;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import javax.swing.JTextArea;
 
 public class Empresa {
 
@@ -74,28 +75,29 @@ public class Empresa {
         return emp.calcularPago();
     }
 
-    public void generarReportes() {
-        int estandar = 0, temporales = 0, ventas = 0;
+    public void generarReportes(JTextArea consola) {
+    int estandar = 0, temporales = 0, ventas = 0;
 
-        for (Empleado e : empleados) {
+    for (Empleado e : empleados) {
 
-            if (e instanceof EmpleadoTemporal) {
-                temporales++;
-            } else if (e instanceof EmpleadoVentas) {
-                ventas++;
-            } else {
-                estandar++;
-            }
-
-            System.out.println("------------------------------------------");
-            System.out.println(e.mostrarInfo());
-            System.out.println("Horas trabajadas: " + e.getHorasTotal());
-            System.out.println("Pago mensual: " + calcularPagoMensual(e.getCodigo()));
+        if (e instanceof EmpleadoTemporal) {
+            temporales++;
+        } else if (e instanceof EmpleadoVentas) {
+            ventas++;
+        } else {
+            estandar++;
         }
 
-        System.out.println("\n<---- RESUMEN DE EMPLEADOS ---->");
-        System.out.println("Empleados base: " + estandar);
-        System.out.println("Empleados temporales: " + temporales);
-        System.out.println("Empleados de ventas: " + ventas);
+        consola.append("<----------------------------->\n");
+        consola.append(e.mostrarInfo() + "\n");
+        consola.append("Horas trabajadas: " + e.getHorasTotal() + "\n");
+        consola.append("Pago mensual: " + calcularPagoMensual(e.getCodigo()) + "\n");
     }
+
+    consola.append("\n<---- RESUMEN DE EMPLEADOS ---->\n");
+    consola.append("Empleados BASE: " + estandar + "\n");
+    consola.append("Empleados TEMPORALES: " + temporales + "\n");
+    consola.append("Empleados de VENTAS: " + ventas + "\n");
+    }
+
 }
