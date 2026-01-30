@@ -10,7 +10,7 @@ public class GUI {
     public static void main(String[] args) {
         configurarAparienciaSistema();
 
-        JFrame frame = new JFrame("Portal Administrativo - Gestion de Talento Humano");
+        JFrame frame = new JFrame("LAB#2 - Herencia - Grupo 5");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1100, 800);
         frame.setLayout(new BorderLayout(20, 20));
@@ -46,31 +46,30 @@ public class GUI {
         JTextField txtHrs = crearCampoElegante();
         JTextField txtExt = crearCampoElegante();
         
-        JComboBox<String> cbTipo = new JComboBox<>(new String[]{"Estandar", "Temporal", "Ventas"});
+        JComboBox<String> cbTipo = new JComboBox<>(new String[]{"Estandar", "Temporal", "Venta"});
         cbTipo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
         JSpinner spIngreso = crearSpinnerFecha();
         JSpinner spSalida = crearSpinnerFecha();
 
-        panelCampos.add(new JLabel("Codigo Identificador:")); panelCampos.add(txtCod);
-        panelCampos.add(new JLabel("Nombre del Empleado:")); panelCampos.add(txtNom);
-        panelCampos.add(new JLabel("Categoria Laboral:")); panelCampos.add(cbTipo);
-        panelCampos.add(new JLabel("Remuneracion Base:")); panelCampos.add(txtSal);
-        panelCampos.add(new JLabel("Fecha de Ingreso:")); panelCampos.add(spIngreso);
-        panelCampos.add(new JLabel("Vencimiento Contrato:")); panelCampos.add(spSalida);
-        panelCampos.add(new JLabel("Horas Reportadas:")); panelCampos.add(txtHrs);
+        panelCampos.add(new JLabel("Codigo identificador:")); panelCampos.add(txtCod);
+        panelCampos.add(new JLabel("Nombre del empleado:")); panelCampos.add(txtNom);
+        panelCampos.add(new JLabel("Categoria laboral:")); panelCampos.add(cbTipo);
+        panelCampos.add(new JLabel("Remuneracion base:")); panelCampos.add(txtSal);
+        panelCampos.add(new JLabel("Fecha de ingreso:")); panelCampos.add(spIngreso);
+        panelCampos.add(new JLabel("Vencimiento contrato:")); panelCampos.add(spSalida);
+        panelCampos.add(new JLabel("Horas reportadas:")); panelCampos.add(txtHrs);
         panelCampos.add(new JLabel("Comision / Ventas:")); panelCampos.add(txtExt);
 
         JTextArea consola = new JTextArea();
         consola.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        /* Cambio a fondo claro para el log */
         consola.setBackground(new Color(250, 250, 250));
         consola.setForeground(new Color(50, 50, 50));
         consola.setCaretColor(Color.BLACK);
         consola.setMargin(new Insets(15, 15, 15, 15));
         
         JScrollPane scroll = new JScrollPane(consola);
-        scroll.setBorder(new TitledBorder(new LineBorder(azulProfundo), "Log de Transacciones", TitledBorder.LEADING, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 12), azulProfundo));
+        scroll.setBorder(new TitledBorder(new LineBorder(azulProfundo), "Log de transacciones", TitledBorder.LEADING, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 12), azulProfundo));
 
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 20));
         panelInferior.setOpaque(false);
@@ -92,25 +91,19 @@ public class GUI {
         frame.add(panelCentral, BorderLayout.CENTER);
         frame.add(panelInferior, BorderLayout.SOUTH);
 
-        /* ESPACIO PARA AGREGAR LOGICA DE BOTONES */
-
         btnAdd.addActionListener(e -> {
-            /* INSERTE AQUI EL CODIGO PARA REGISTRAR EMPLEADO */
             consola.append("> Iniciando registro de empleado...\n");
         });
 
         btnSearch.addActionListener(e -> {
-            /* INSERTE AQUI EL CODIGO PARA BUSCAR EMPLEADO POR CODIGO */
             consola.append("> Buscando empleado en la base de datos...\n");
         });
 
         btnPay.addActionListener(e -> {
-            /* INSERTE AQUI EL CODIGO PARA CALCULAR EL SALARIO NETO */
             consola.append("> Calculando nomina del periodo actual...\n");
         });
 
         btnInfo.addActionListener(e -> {
-            /* INSERTE AQUI EL CODIGO PARA GENERAR EL REPORTE GENERAL */
             consola.append("> Generando reporte detallado de empleados...\n");
         });
 
@@ -118,10 +111,10 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    private static void configurarAparienciaSistema() {
+    private static void configurarAparienciaSistema(){
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Nimbus".equals(info.getName())){
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -129,7 +122,7 @@ public class GUI {
         } catch (Exception ignored) {}
     }
 
-    private static JTextField crearCampoElegante() {
+    private static JTextField crearCampoElegante(){
         JTextField campo = new JTextField();
         campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         campo.setBorder(BorderFactory.createCompoundBorder(
@@ -139,14 +132,14 @@ public class GUI {
         return campo;
     }
 
-    private static JSpinner crearSpinnerFecha() {
+    private static JSpinner crearSpinnerFecha(){
         JSpinner s = new JSpinner(new SpinnerDateModel());
         s.setEditor(new JSpinner.DateEditor(s, "dd/MM/yyyy"));
         s.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         return s;
     }
 
-    private static JButton crearBotonEstilizado(String texto, Color fondo) {
+    private static JButton crearBotonEstilizado(String texto, Color fondo){
         JButton b = new JButton(texto);
         b.setPreferredSize(new Dimension(160, 45));
         b.setBackground(fondo);
