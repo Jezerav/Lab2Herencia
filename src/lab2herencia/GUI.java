@@ -1,5 +1,6 @@
 package lab2herencia;
 
+import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -11,14 +12,15 @@ public class GUI {
     private static Empresa empresa = new Empresa();
     private static JTextField txtCod, txtNom, txtSal, txtHrs, txtExt;
     private static JComboBox<String> cbTipo;
-    private static JSpinner spIngreso, spSalida;
+    /* Se cambian los JSpinner por JDateChooser */
+    private static JDateChooser jdIngreso, jdSalida;
 
     public static void main(String[] args) {
         configurarAparienciaSistema();
 
         JFrame frame = new JFrame("LAB#2 - Herencia - Grupo 5");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1100, 800);
+        frame.setSize(1100, 850);
         frame.setLayout(new BorderLayout(20, 20));
 
         Color azulProfundo = new Color(41, 128, 185);
@@ -30,7 +32,7 @@ public class GUI {
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBackground(azulProfundo);
         panelSuperior.setPreferredSize(new Dimension(0, 80));
-        JLabel lblTitulo = new JLabel(" SISTEMA DE GESTION EMPRESARIAL", JLabel.CENTER);
+        JLabel lblTitulo = new JLabel("GESTION DE EMPLEADOS", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(blancoPuro);
         panelSuperior.add(lblTitulo, BorderLayout.CENTER);
@@ -55,15 +57,19 @@ public class GUI {
         cbTipo = new JComboBox<>(new String[]{"Estandar", "Temporal", "Venta"});
         cbTipo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        spIngreso = crearSpinnerFecha();
-        spSalida = crearSpinnerFecha();
+        /* Inicializacion de los selectores de fecha con calendario */
+        jdIngreso = new JDateChooser();
+        jdIngreso.setDateFormatString("dd/MM/yyyy");
+        
+        jdSalida = new JDateChooser();
+        jdSalida.setDateFormatString("dd/MM/yyyy");
 
         panelCampos.add(new JLabel("Codigo identificador:")); panelCampos.add(txtCod);
         panelCampos.add(new JLabel("Nombre del empleado:")); panelCampos.add(txtNom);
         panelCampos.add(new JLabel("Categoria laboral:")); panelCampos.add(cbTipo);
         panelCampos.add(new JLabel("Salario base:")); panelCampos.add(txtSal);
-        panelCampos.add(new JLabel("Fecha de ingreso:")); panelCampos.add(spIngreso);
-        panelCampos.add(new JLabel("Vencimiento contrato:")); panelCampos.add(spSalida);
+        panelCampos.add(new JLabel("Fecha de ingreso:")); panelCampos.add(jdIngreso);
+        panelCampos.add(new JLabel("Vencimiento contrato:")); panelCampos.add(jdSalida);
         panelCampos.add(new JLabel("Horas reportadas:")); panelCampos.add(txtHrs);
         panelCampos.add(new JLabel("Comision / Ventas:")); panelCampos.add(txtExt);
 
@@ -74,7 +80,7 @@ public class GUI {
         consola.setMargin(new Insets(15, 15, 15, 15));
 
         JScrollPane scroll = new JScrollPane(consola);
-        scroll.setBorder(new TitledBorder(new LineBorder(azulProfundo), "Log de transacciones",
+        scroll.setBorder(new TitledBorder(new LineBorder(azulProfundo), "Informacion de cambios",
                 TitledBorder.LEADING, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 12), azulProfundo));
 
         JPanel panelInferior = new JPanel(new GridLayout(1, 7, 10, 0)); // 1 fila, 7 columnas, 10px entre botones
@@ -133,7 +139,7 @@ panelInferior.setOpaque(false);
 
 
         btnAdd.addActionListener(e -> {
-            int respuesta = JOptionPane.showConfirmDialog(frame, "Desea registrar al empleado con los datos ingresados?", "Confirmar Registro", JOptionPane.YES_NO_OPTION);
+            int respuesta = JOptionPane.showConfirmDialog(frame, "Desea registrar al empleado?", "Confirmacion", JOptionPane.YES_NO_OPTION);
             if (respuesta == JOptionPane.YES_OPTION) {
                 try {
                     String codigo = txtCod.getText().trim();
@@ -144,9 +150,10 @@ panelInferior.setOpaque(false);
                     double comision = txtExt.getText().isEmpty() ? 0 : Double.parseDouble(txtExt.getText().trim());
 
                     Calendar ingreso = Calendar.getInstance();
-                    ingreso.setTime((Date) spIngreso.getValue());
+                    ingreso.setTime(jdIngreso.getDate());
+                    
                     Calendar salida = Calendar.getInstance();
-                    salida.setTime((Date) spSalida.getValue());
+                    if(jdSalida.getDate() != null) salida.setTime(jdSalida.getDate());
 
                     Empleado emp = null;
                     if (tipo.equals("Estandar")) emp = new Empleado(codigo, nombre, salario);
@@ -158,47 +165,40 @@ panelInferior.setOpaque(false);
                         consola.append("> Registro exitoso: " + codigo + "\n");
                         limpiarCampos();
                     } else {
-                        JOptionPane.showMessageDialog(frame, "Error: El codigo ya existe.");
+                        JOptionPane.showMessageDialog(frame, "Error: Este empleado ya existe.");
                     }
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frame, "Error en formato de datos.");
+                    JOptionPane.showMessageDialog(frame, "Error: Verifique que las fechas y numeros sean correctos.");
                 }
             }
         });
 
         btnSearch.addActionListener(e -> {
-            String codBusqueda = JOptionPane.showInputDialog(frame, "Ingrese el codigo del empleado a buscar:");
+            String codBusqueda = JOptionPane.showInputDialog(frame, "Ingrese el codigo del empleado: ");
             if (codBusqueda != null && !codBusqueda.isEmpty()) {
                 Empleado emp = empresa.buscarEmpleado(codBusqueda);
                 if (emp != null) {
-                    consola.append("> Resultado de busqueda:\n" + emp.mostrarInfo() + "\n");
+                    consola.append("> Datos encontrados:\n" + emp.mostrarInfo() + "\n");
                     limpiarCampos();
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Empleado no encontrado.");
+                    JOptionPane.showMessageDialog(frame, "No se encontro el empleado.");
                 }
             }
         });
 
         btnPay.addActionListener(e -> {
-            String codPago = JOptionPane.showInputDialog(frame, "Ingrese el codigo para calcular el pago:");
+            String codPago = JOptionPane.showInputDialog(frame, "Codigo del empleado para hacer calculo: ");
             if (codPago != null && !codPago.isEmpty()) {
                 double pago = empresa.calcularPagoMensual(codPago);
-                if (pago > 0) {
-                    consola.append("> Pago calculado para " + codPago + ": $" + pago + "\n");
-                    limpiarCampos();
-                } else {
-                    JOptionPane.showMessageDialog(frame, "No se pudo calcular el pago. Verifique el codigo.");
-                }
+                consola.append("> Pago de " + codPago + ": $" + pago + "\n");
+                limpiarCampos();
             }
         });
         
         
 
         btnInfo.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Generando reportes en consola del sistema...");
             empresa.generarReportes(consola);
-            consola.append("> Reporte generado exitosamente.\n");
-            
         });
         
         btnHoras.addActionListener(e -> {
@@ -275,6 +275,8 @@ panelInferior.setOpaque(false);
         txtHrs.setText("");
         txtExt.setText("");
         cbTipo.setSelectedIndex(0);
+        jdIngreso.setDate(new Date());
+        jdSalida.setDate(null);
     }
 
     private static void configurarAparienciaSistema() {
@@ -296,13 +298,6 @@ panelInferior.setOpaque(false);
                 new EmptyBorder(5, 10, 5, 10)
         ));
         return campo;
-    }
-
-    private static JSpinner crearSpinnerFecha() {
-        JSpinner s = new JSpinner(new SpinnerDateModel());
-        s.setEditor(new JSpinner.DateEditor(s, "dd/MM/yyyy"));
-        s.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        return s;
     }
 
     private static JButton crearBotonEstilizado(String texto, Color fondo) {
