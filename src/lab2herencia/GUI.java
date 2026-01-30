@@ -83,18 +83,28 @@ public class GUI {
         scroll.setBorder(new TitledBorder(new LineBorder(azulProfundo), "Informacion de cambios",
                 TitledBorder.LEADING, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 12), azulProfundo));
 
-        JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 20));
-        panelInferior.setOpaque(false);
+        JPanel panelInferior = new JPanel(new GridLayout(1, 7, 10, 0)); // 1 fila, 7 columnas, 10px entre botones
+panelInferior.setOpaque(false);
+
+
 
         JButton btnAdd = crearBotonEstilizado("REGISTRAR", new Color(46, 204, 113));
         JButton btnSearch = crearBotonEstilizado("BUSCAR", new Color(52, 152, 219));
         JButton btnPay = crearBotonEstilizado("CALCULAR PAGO", new Color(230, 126, 34));
         JButton btnInfo = crearBotonEstilizado("REPORTE", new Color(155, 89, 182));
 
+        JButton btnHoras = crearBotonEstilizado("AGREGAR HORAS", new Color(52, 73, 94));
+        JButton btnVentas = crearBotonEstilizado("REGISTRAR VENTAS", new Color(39, 174, 96));
+        JButton btnActualizarContrato = crearBotonEstilizado("ACTU. FECHA", new Color(192, 57, 43));
+
         panelInferior.add(btnAdd);
         panelInferior.add(btnSearch);
         panelInferior.add(btnPay);
         panelInferior.add(btnInfo);
+        panelInferior.add(btnHoras);
+        panelInferior.add(btnVentas);
+        panelInferior.add(btnActualizarContrato);
+
 
         panelCentral.add(panelCampos, BorderLayout.NORTH);
         panelCentral.add(scroll, BorderLayout.CENTER);
@@ -102,6 +112,31 @@ public class GUI {
         frame.add(panelSuperior, BorderLayout.NORTH);
         frame.add(panelCentral, BorderLayout.CENTER);
         frame.add(panelInferior, BorderLayout.SOUTH);
+        
+        cbTipo.addActionListener(e -> {
+            String tipo = (String) cbTipo.getSelectedItem();
+
+            switch (tipo) {
+                case "Estandar":
+                    spSalida.setVisible(false);
+                    txtExt.setVisible(false);
+                    break;
+                case "Temporal":
+                    spSalida.setVisible(true);
+                    txtExt.setVisible(false);
+                    break;
+                case "Venta":
+                    spSalida.setVisible(false);
+                    txtExt.setVisible(true);
+                    break;
+            }
+
+            spSalida.getParent().revalidate();
+            spSalida.getParent().repaint();
+            txtExt.getParent().revalidate();
+            txtExt.getParent().repaint();
+        });
+
 
         btnAdd.addActionListener(e -> {
             int respuesta = JOptionPane.showConfirmDialog(frame, "Desea registrar al empleado?", "Confirmacion", JOptionPane.YES_NO_OPTION);
@@ -159,10 +194,75 @@ public class GUI {
                 limpiarCampos();
             }
         });
+        
+        
 
         btnInfo.addActionListener(e -> {
             empresa.generarReportes(consola);
         });
+        
+        btnHoras.addActionListener(e -> {
+            String cod = JOptionPane.showInputDialog(frame, "Ingrese el codigo del empleado:");
+            if (cod != null && !cod.isEmpty()) {
+                Empleado emp = empresa.buscarEmpleado(cod);
+                if (emp != null) {
+                    try {
+                        double horas = Double.parseDouble(JOptionPane.showInputDialog(frame, "Ingrese las horas trabajadas:"));
+                        emp.registrarHoras(horas);
+                        consola.append("> Se agregaron " + horas + " horas a " + cod + "\n");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, "Formato de horas incorrecto.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Empleado no encontrado.");
+                }
+            }
+        });
+
+        btnVentas.addActionListener(e -> {
+            String cod = JOptionPane.showInputDialog(frame, "Ingrese el codigo del empleado de ventas:");
+            if (cod != null && !cod.isEmpty()) {
+                Empleado emp = empresa.buscarEmpleado(cod);
+                if (emp != null && emp.getClass().getSimpleName().equals("EmpleadoVentas")) {
+                    try {
+                        double monto = Double.parseDouble(JOptionPane.showInputDialog(frame, "Ingrese el monto de ventas:"));
+                        ((EmpleadoVentas) emp).registrarVentas(monto); // cast explícito
+                        consola.append("> Se registraron $" + monto + " de ventas a " + cod + "\n");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, "Formato de monto incorrecto.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "El empleado no es de tipo Ventas.");
+                }
+            }
+        });
+
+
+        btnActualizarContrato.addActionListener(e -> {
+            String cod = JOptionPane.showInputDialog(frame, "Ingrese el codigo del empleado temporal:");
+            if (cod != null && !cod.isEmpty()) {
+                Empleado emp = empresa.buscarEmpleado(cod);
+                if (emp != null && emp.getClass().getSimpleName().equals("EmpleadoTemporal")) {
+                    try {
+                        JSpinner spNueva = crearSpinnerFecha();
+                        int res = JOptionPane.showConfirmDialog(frame, spNueva, 
+                                "Seleccione nueva fecha de fin de contrato", JOptionPane.OK_CANCEL_OPTION);
+                        if (res == JOptionPane.OK_OPTION) {
+                            Calendar nuevaFecha = Calendar.getInstance();
+                            nuevaFecha.setTime((Date) spNueva.getValue());
+                            ((EmpleadoTemporal) emp).actualizarFecha(nuevaFecha);
+                            consola.append("> Fecha de fin de contrato actualizada para " + cod + "\n");
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, "Error al actualizar fecha.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "El empleado no es temporal.");
+                }
+            }
+        });
+
+
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
