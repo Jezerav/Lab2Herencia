@@ -6,6 +6,10 @@ import java.time.LocalDate;
 
 public class Empresa {
     
+    protected double horas;
+    protected String codigo;
+    protected double monto;
+    
     public Empresa() {
         empleados = new ArrayList<>();
     }
@@ -50,11 +54,11 @@ public class Empresa {
         
     }
     
-    public boolean actualizarFechaFinContrato(){
+    public boolean actualizarFecha(){
         Empleado emp = buscarEmpleado(codigo);
         
         if (emp instanceof EmpleadoTemporal temp) {
-            temp.actualizarFechaFin(nuevaFecha);
+            temp.actualizarFecha(fechaNueva);
             return true;
         }
         return false;
@@ -68,10 +72,20 @@ public class Empresa {
     }
     
     public void generarReportes(){
-        
+        int est = 0, temp = 0, vent = 0;
+
+        for (Empleado e : empleados) {
+            System.out.println("Código: " + e.codigo + " | Nombre: " + e.nombre);
+            System.out.println("Horas trabajadas: " + e.horasTrabajadas);
+            System.out.println("Pago mensual: " + e.calcularPagoMensual());
+            
+            if (e instanceof Empleado) est++;
+            else if (e instanceof EmpleadoTemporal) temp++;
+            else if (e instanceof EmpleadoVentas) vent++;
+            
+            System.out.println("----------------------------------");
+        }
+
     }
     
-    public void buscarEmpleados(){
-        
-    }
 }
